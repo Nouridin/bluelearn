@@ -2,4 +2,17 @@
 
 import { tanstackConfig } from "@tanstack/eslint-config"
 
-export default [...tanstackConfig]
+export default [
+  {
+    ignores: [
+      ".output/",
+      ".nitro/",
+      ".tanstack/",
+      ".vinxi/",
+      "dist/",
+      "dist-ssr/",
+      "src/routeTree.gen.ts",
+    ],
+  },
+  ...tanstackConfig,
+]
