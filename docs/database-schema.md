@@ -15,6 +15,10 @@ The schema deliberately keeps the database source of truth small:
 - Store governance records (votes, review cases, panels, decisions) as ground truth.
 - Do not store values that can be derived from the graph.
 
+## Entity Relationship Diagram
+![Entity Relationship Diagram](images/erd.png)
+
+## Tables
 ### `profiles`
 
 - `id`: primary key, references the auth user.
@@ -66,7 +70,7 @@ Methods, alternatives, and the original write-up all live here as **guides** und
 - `slug`: stable, per-guide URL identifier, unique within `guide_base_id` (see [Slugs and URLs](#slugs-and-urls)). Derived from the title and frozen at first publish; never auto-changed by later title edits.
 - `current_revision_id`: nullable FK to `guide_revisions`; points at the revision whose review case was approved (the guide's live content), null before the guide is first published. Creates a guide ↔ revision pointer cycle, so the FK should be deferrable.
 - `status`: node-level disposition; same shape as `guide_bases.status` (see enum below).
-- `author_id`: the guide's original author.
+- `author_id`: the guide's original author (FK to `profiles`).
 - `created_at`: row creation time.
 - `updated_at`: last update time.
 
