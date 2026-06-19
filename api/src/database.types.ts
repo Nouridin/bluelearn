@@ -282,6 +282,204 @@ export type Database = {
           },
         ]
       }
+      learning_path_review_cases: {
+        Row: {
+          case_id: string
+          learning_path_revision_id: string
+        }
+        Insert: {
+          case_id: string
+          learning_path_revision_id: string
+        }
+        Update: {
+          case_id?: string
+          learning_path_revision_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_path_review_cases_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: true
+            referencedRelation: "review_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learning_path_review_cases_learning_path_revision_id_fkey"
+            columns: ["learning_path_revision_id"]
+            isOneToOne: false
+            referencedRelation: "learning_path_revisions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_path_revision_edges: {
+        Row: {
+          from_guide_base_id: string
+          revision_id: string
+          to_guide_base_id: string
+        }
+        Insert: {
+          from_guide_base_id: string
+          revision_id: string
+          to_guide_base_id: string
+        }
+        Update: {
+          from_guide_base_id?: string
+          revision_id?: string
+          to_guide_base_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_path_revision_edges_from_is_node"
+            columns: ["revision_id", "from_guide_base_id"]
+            isOneToOne: false
+            referencedRelation: "learning_path_revision_nodes"
+            referencedColumns: ["revision_id", "guide_base_id"]
+          },
+          {
+            foreignKeyName: "learning_path_revision_edges_to_is_node"
+            columns: ["revision_id", "to_guide_base_id"]
+            isOneToOne: false
+            referencedRelation: "learning_path_revision_nodes"
+            referencedColumns: ["revision_id", "guide_base_id"]
+          },
+        ]
+      }
+      learning_path_revision_nodes: {
+        Row: {
+          guide_base_id: string
+          guide_id: string
+          is_target: boolean
+          note: string | null
+          revision_id: string
+        }
+        Insert: {
+          guide_base_id: string
+          guide_id: string
+          is_target?: boolean
+          note?: string | null
+          revision_id: string
+        }
+        Update: {
+          guide_base_id?: string
+          guide_id?: string
+          is_target?: boolean
+          note?: string | null
+          revision_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_path_revision_nodes_revision_id_fkey"
+            columns: ["revision_id"]
+            isOneToOne: false
+            referencedRelation: "learning_path_revisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learning_path_revision_nodes_variant_of_base"
+            columns: ["guide_id", "guide_base_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id", "guide_base_id"]
+          },
+        ]
+      }
+      learning_path_revisions: {
+        Row: {
+          author_id: string | null
+          change_summary: string | null
+          created_at: string
+          id: string
+          learning_path_id: string
+          revision_number: number
+          status: Database["public"]["Enums"]["revision_status"]
+          summary: string | null
+          title: string | null
+        }
+        Insert: {
+          author_id?: string | null
+          change_summary?: string | null
+          created_at?: string
+          id?: string
+          learning_path_id: string
+          revision_number: number
+          status?: Database["public"]["Enums"]["revision_status"]
+          summary?: string | null
+          title?: string | null
+        }
+        Update: {
+          author_id?: string | null
+          change_summary?: string | null
+          created_at?: string
+          id?: string
+          learning_path_id?: string
+          revision_number?: number
+          status?: Database["public"]["Enums"]["revision_status"]
+          summary?: string | null
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_path_revisions_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learning_path_revisions_learning_path_id_fkey"
+            columns: ["learning_path_id"]
+            isOneToOne: false
+            referencedRelation: "learning_paths"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_paths: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          current_revision_id: string | null
+          id: string
+          slug: string | null
+          status: Database["public"]["Enums"]["node_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          current_revision_id?: string | null
+          id?: string
+          slug?: string | null
+          status?: Database["public"]["Enums"]["node_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          current_revision_id?: string | null
+          id?: string
+          slug?: string | null
+          status?: Database["public"]["Enums"]["node_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_paths_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learning_paths_current_revision_id_fkey"
+            columns: ["current_revision_id", "id"]
+            isOneToOne: false
+            referencedRelation: "learning_path_revisions"
+            referencedColumns: ["id", "learning_path_id"]
+          },
+        ]
+      }
       media_assets: {
         Row: {
           created_at: string
@@ -711,7 +909,11 @@ export type Database = {
     Enums: {
       app_role: "verifier" | "moderator" | "admin"
       case_status: "pending" | "in_review" | "approved" | "rejected"
-      case_type: "guide_publish" | "guide_edit"
+      case_type:
+        | "guide_publish"
+        | "guide_edit"
+        | "learning_path_publish"
+        | "learning_path_edit"
       decision_reason:
         | "hierarchy_issue"
         | "factual_error"
@@ -865,7 +1067,12 @@ export const Constants = {
     Enums: {
       app_role: ["verifier", "moderator", "admin"],
       case_status: ["pending", "in_review", "approved", "rejected"],
-      case_type: ["guide_publish", "guide_edit"],
+      case_type: [
+        "guide_publish",
+        "guide_edit",
+        "learning_path_publish",
+        "learning_path_edit",
+      ],
       decision_reason: [
         "hierarchy_issue",
         "factual_error",
